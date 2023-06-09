@@ -470,12 +470,23 @@ global:
     port: 5665
     users:
       director:
-        password:  # Add a password here
+        password:
+          value: # Add a password here
+          secret:
+            name: # Add the name of a Kubernetes secret
+            key: # Add the name of the secret's key
+          env: "ICINGA2_API_DIRECTOR_PASSWORD"
         permissions:
         - "*"
 
       icingaweb:
-        password:  # Add a password here
+        username: # Add a username here
+        password:
+          value: # Add a password here
+          secret:
+            name: # Add the name of a Kubernetes secret
+            key: # Add the name of the secret's key
+          env: "ICINGA2_API_ICINGAWEB2_PASSWORD"
         permissions:
         - "*"
 

@@ -11,10 +11,14 @@ data:
   {{- if .Values.features.api.enabled }}
   api-users.conf: |
     {{- range $user, $settings := .Values.global.api.users }}
-    {{- $password := $settings.password | required (print ".Values.global.api" $user ".password is required.") }}
     {{- $permissions := $settings.permissions | default (list "*") }}
     object ApiUser {{ $user | quote }} {
-      password = {{ $password | quote }}
+      {{- if $settings.password.value }}
+      {{- $password := $settings.password.value | quote }}
+      password = {{ $password }}
+      {{- else if and ($settings.password.secret.name) ($settings.password.secret.key) }}
+      password = getenv({{ $settings.password.env | quote }})
+      {{- end }}
       permissions = {{ print "[\"" (join "\"," $settings.permissions) "\"]" }}
     }
     {{- end }}

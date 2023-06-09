@@ -49,6 +49,21 @@ spec:
               mountPath: /etc/icinga2
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            {{- if and (.Values.global.api.users.director.password.secret.name) (.Values.global.api.users.director.password.secret.key) }}
+            - name: ICINGA2_API_DIRECTOR_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.api.users.director.password.secret.name | quote }}
+                  key: {{ .Values.global.api.users.director.password.secret.key | quote }}
+            {{- end }}
+            {{- if and (.Values.global.api.users.icingaweb.password.secret.name) (.Values.global.api.users.icingaweb.password.secret.key) }}
+            - name: ICINGA2_API_ICINGAWEB2_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.api.users.icingaweb.password.secret.name | quote }}
+                  key: {{ .Values.global.api.users.icingaweb.password.secret.key | quote }}
+            {{- end }}
       initContainers:
         - name: {{ .Chart.Name }}-bootstrapper
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"

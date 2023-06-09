@@ -1,7 +1,6 @@
 ---
 {{- define "icingaweb2.config" -}}
 {{- if .Values.modules.director.enabled }}
-{{- $global_api_director_password := .Values.global.api.users.director.password | required ".Values.global.api.users.director.password is required." }}
 - name: icingaweb.modules.director.config.db.resource
   value: {{ .Values.global.databases.director.database | quote }}
 {{- if .Values.modules.director.kickstart }}
@@ -12,7 +11,17 @@
 - name: icingaweb.modules.director.kickstart.config.username
   value: director
 - name: icingaweb.modules.director.kickstart.config.password
-  value: {{ $global_api_director_password | quote }}
+{{- if .Values.global.api.users.director.password.value }}
+{{- $global_api_director_password_value := .Values.global.api.users.director.password.value }}
+  value: {{ $global_api_director_password_value | quote }}
+{{- else if and (.Values.global.api.users.director.password.secret.name) (.Values.global.api.users.director.password.secret.key) }}
+{{- $global_api_director_password_secret_name := .Values.global.api.users.director.password.secret.name }}
+{{- $global_api_director_password_secret_key := .Values.global.api.users.director.password.secret.key }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ $global_api_director_password_secret_name | quote }}
+      key: {{ $global_api_director_password_secret_key | quote }}
+{{- end }}
 {{- end }}
 {{- end }}
 - name: icingaweb.authentication.icingaweb2.backend
@@ -46,7 +55,6 @@
 - name: icingaweb.roles.Administrators.groups
   value: Administrators
 {{- if .Values.modules.icingadb.enabled }}
-{{- $global_api_users_icingaweb_password := .Values.global.api.users.icingaweb.password | required ".Values.global.api.users.icingaweb.password is required." }}
 - name: icingaweb.modules.icingadb.config.icingadb.resource
   value: {{ .Values.global.databases.icingadb.database | quote }}
 - name: icingaweb.modules.icingadb.redis.redis1.host
@@ -64,7 +72,19 @@
 - name: icingaweb.modules.icingadb.commandtransports.icinga2.username
   value: {{ .Values.global.api.users.icingaweb.username | quote }}
 - name: icingaweb.modules.icingadb.commandtransports.icinga2.password
-  value: {{ $global_api_users_icingaweb_password | quote }}
+{{- if .Values.global.api.users.icingaweb.password.value }}
+{{- $global_api_users_icingaweb_password_value := .Values.global.api.users.icingaweb.password.value }}
+  value: {{ $global_api_users_icingaweb_password_value | quote }}
+{{- else if and (.Values.global.api.users.icingaweb.password.secret.name) (.Values.global.api.users.icingaweb.password.secret.key) }}
+{{- $global_api_users_icingaweb_password_secret_name := .Values.global.api.users.icingaweb.password.secret.name }}
+{{- $global_api_users_icingaweb_password_secret_key := .Values.global.api.users.icingaweb.password.secret.key }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ $global_api_users_icingaweb_password_secret_name | quote }}
+      key: {{ $global_api_users_icingaweb_password_secret_key | quote }}
+{{- else }}
+{{- fail "doof" }}
+{{- end }}
 {{- end }}
 {{- if .Values.modules.audit.enabled }}
 - name: icingaweb.modules.audit.config.log.type
