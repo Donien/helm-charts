@@ -35,17 +35,38 @@ Once the repository is known to your Helm installation, you can install Icinga2 
 
 ```console
 helm install <release-name> \
-  --set icinga2.config.ticket_salt=CHANGE-ME
-  --set icingaweb2.auth.admin_password=CHANGE-ME
-  --set global.api.users.director.password=CHANGE-ME
-  --set global.api.users.director.icingaweb.password=CHANGE-ME
-  --set global.databases.director.password=CHANGE-ME
-  --set global.databases.icingaweb2.password=CHANGE-ME
-  --set global.databases.icingadb.password=CHANGE-ME
+  --set icinga2.config.ticket_salt.value=CHANGE-ME \
+  --set icingaweb2.auth.admin_password.value=CHANGE-ME \
+  --set global.api.users.director.password.value=CHANGE-ME \
+  --set global.api.users.director.icingaweb.password.value=CHANGE-ME \
+  --set global.databases.director.password.value=CHANGE-ME \
+  --set global.databases.icingaweb2.password.value=CHANGE-ME \
+  --set global.databases.icingadb.password.value=CHANGE-ME \
 icinga-stack
 ```
 
 This example sets all **required** value for the chart to install successfully. For more information on the available configuration options, see the [configuration](docs/configuration.md#configuration) section.
+
+Example using Kubernetes secrets:  
+
+```console
+helm install <release-name> \
+  --set icinga2.config.ticket_salt.secret.name=CHANGE-ME \
+  --set icinga2.config.ticket_salt.secret.key=CHANGE-ME \
+  --set icingaweb2.auth.admin_password.secret.name=CHANGE-ME \
+  --set icingaweb2.auth.admin_password.secret.key=CHANGE-ME \
+  --set global.api.users.director.password.secret.name=CHANGE-ME \
+  --set global.api.users.director.password.secret.key=CHANGE-ME \
+  --set global.api.users.director.icingaweb.password.secret.name=CHANGE-ME \
+  --set global.api.users.director.icingaweb.password.secret.key=CHANGE-ME \
+  --set global.databases.director.password.secret.name=CHANGE-ME \
+  --set global.databases.director.password.secret.key=CHANGE-ME \
+  --set global.databases.icingaweb2.password.name=CHANGE-ME \
+  --set global.databases.icingaweb2.password.key=CHANGE-ME \
+  --set global.databases.icingadb.password.name=CHANGE-ME \
+  --set global.databases.icingadb.password.key=CHANGE-ME \
+icinga-stack
+```
 
 ## Upgrading
 
