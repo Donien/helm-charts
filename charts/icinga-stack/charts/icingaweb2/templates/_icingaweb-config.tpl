@@ -1,6 +1,5 @@
 ---
 {{- define "icingaweb2.config" -}}
-{{- $auth_admin_password := .Values.auth.admin_password | required ".Values.icingaweb2.auth.admin_password is required." -}}
 {{- if .Values.modules.director.enabled }}
 {{- $global_api_director_password := .Values.global.api.users.director.password | required ".Values.global.api.users.director.password is required." }}
 - name: icingaweb.modules.director.config.db.resource
@@ -21,7 +20,19 @@
 - name: icingaweb.authentication.icingaweb2.resource
   value: {{ .Values.auth.resource | default .Values.global.databases.icingaweb2.database | quote }}
 - name: "icingaweb.passwords.icingaweb2.{{ .Values.auth.admin_user}}"
-  value: {{ $auth_admin_password | quote }}
+{{- if .Values.auth.admin_password.value }}
+{{- $auth_admin_password_value := .Values.auth.admin_password.value }}
+  value: {{ $auth_admin_password_value | quote }}
+{{- else if and (.Values.auth.admin_password.secret.name) (.Values.auth.admin_password.secret.key) }}
+{{- $auth_admin_password_secret_name := .Values.auth.admin_password.secret.name }}
+{{- $auth_admin_password_secret_key := .Values.auth.admin_password.secret.key }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ $auth_admin_password_secret_name | quote }}
+      key: {{ $auth_admin_password_secret_key | quote }}
+{{- else }}
+{{- fail "Either .Values.auth.admin_password.value or .Values.auth.admin_password.secret.name and .Values.auth.admin_password.secret.key are needed" }}
+{{- end }}
 - name: icingaweb.config.global.config_resource
   value: {{ .Values.auth.resource | default .Values.global.databases.icingaweb2.database | quote }}
 - name: icingaweb.groups.icingaweb2.backend

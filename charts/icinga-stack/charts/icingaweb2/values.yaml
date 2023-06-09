@@ -34,7 +34,12 @@ auth:
   type: db
   #resource: # Add the name of the db resource used by Icinga Web 2 here
   admin_user: icingaweb
-  admin_password:  # Add a password here
+  admin_password:
+    value: # Add a password here
+    secret:
+      name: # Add the name of a Kubernetes secret
+      key: # Add the name of the secret's key
+
 
 modules:
   audit:
